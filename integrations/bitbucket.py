@@ -31,9 +31,11 @@ class Bitbucket:
         response = httpx.post(url, headers=headers, json={"content": {"raw": comment}})
 
         if response.status_code == 201:
-            logger.info("Comment posted successfully")
+            logger.warning("Comment posted successfully")
         else:
-            logger.info(f"Failed to post comment: {response.status_code} {response.text}")
+            logger.warning(
+                f"Failed to post comment: {response.status_code} {response.text}"
+            )
 
 
 class BitbucketEventHandler(EventHandler):
@@ -43,15 +45,17 @@ class BitbucketEventHandler(EventHandler):
         workspace = self.data["repository"]["workspace"]["uuid"]
         diff_link = self.data["pullrequest"]["links"]["diff"]["href"]
 
-        logger.info("Get the pull request changes (diff)")
+        logger.warning("Get the pull request changes (diff)")
         diff = await Bitbucket.get_pull_request_changes(diff_link)
 
-        logger.info("Process the diff, review it using GPT, and post comments on Bitbucket")
+        logger.warning(
+            "Process the diff, review it using GPT, and post comments on Bitbucket"
+        )
         review_result = await CodeReviewer.review_code_diff(
             file_name=f"",
             diff=diff,
         )
-        logger.info("Review result: ", review_result)
+        logger.warning(f"Review result: {review_result}")
 
         if review_result and review_result["should_comment"]:
             Bitbucket.comment_on_pull_request(

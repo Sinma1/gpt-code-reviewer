@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+logger.warning("GPT model: " + config.GPT_MODEL)
+
 
 @app.get("/")
 async def root():
@@ -34,12 +36,12 @@ async def review_code_gitlab_webhook(
     request: Request,
     x_gitlab_event: str = Header(),
 ):
-    logger.info("Received GitLab webhook")
+    logger.warning("Received GitLab webhook")
     data = await request.json()
     if x_gitlab_event == "Merge Request Hook":
         asyncio.create_task(GitLabEventHandler(data).handle_event())
 
-    logger.info("Finished processing GitLab webhook")
+    logger.warning("Finished processing GitLab webhook")
     return {"status": "ok"}
 
 
@@ -48,12 +50,12 @@ async def review_code_bitbucket_webhook(
     request: Request,
     x_event_key: str = Header(),
 ):
-    logger.info("Received Bitbucket webhook")
+    logger.warning("Received Bitbucket webhook")
     data = await request.json()
     if x_event_key == "pullrequest:created" or x_event_key == "pullrequest:updated":
         asyncio.create_task(BitbucketEventHandler(data).handle_event())
 
-    logger.info("Finished processing Bitbucket webhook")
+    logger.warning("Finished processing Bitbucket webhook")
     return {"status": "ok"}
 
 

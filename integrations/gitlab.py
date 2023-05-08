@@ -31,9 +31,11 @@ class GitLab:
         response = httpx.post(url, headers=headers, data=data)
 
         if response.status_code == 201:
-            logger.info("Comment posted successfully")
+            logger.warning("Comment posted successfully")
         else:
-            logger.info(f"Failed to post comment: {response.status_code} {response.text}")
+            logger.warning(
+                f"Failed to post comment: {response.status_code} {response.text}"
+            )
 
 
 class GitLabEventHandler(EventHandler):
@@ -41,12 +43,12 @@ class GitLabEventHandler(EventHandler):
         project_id = self.data["project"]["id"]
         merge_request_id = self.data["object_attributes"]["iid"]
 
-        logger.info("Process the merge request data and get the code diff")
+        logger.warning("Process the merge request data and get the code diff")
         changes = await GitLab.get_merge_request_changes(project_id, merge_request_id)
 
-        logger.info("Interact with GPT to review code and post comments on GitLab")
+        logger.warning("Interact with GPT to review code and post comments on GitLab")
         for review_result in await self.review_changes_at_once(changes):
-            logger.info("Review result: ", review_result)
+            logger.warning(f"Review result: {review_result}")
             if review_result and review_result["should_comment"]:
                 GitLab.comment_on_merge_request(
                     project_id,
