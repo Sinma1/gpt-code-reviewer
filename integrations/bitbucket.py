@@ -61,8 +61,8 @@ class BitbucketEventHandler(EventHandler):
                 comment=(
                     f"GPT Code Review\n\n"
                     f""
-                    f'#Possible issues: \n{review_result["issues"]}\n\n'
-                    f'#Suggestions: \n{review_result["suggestions"]}'
+                    f'Possible issues: \n{review_result["issues"]}\n\n'
+                    f'Suggestions: \n{review_result["suggestions"]}'
                 ),
             )
         elif review_result is None:
