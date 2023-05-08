@@ -23,11 +23,11 @@ class CodeReviewer:
             f"Does this code diffs contain any issues? Can it be improved?\n"
             f"Answer in valid json format in the following form:\n"
             f'{{"should_comment": bool, "issues": "<possible issues with code with detailed explanation why>", "suggestions": "<suggestions of improvements that can be introduced to code with explanation why"}}\n\n'
-            f"Remember to format it readably and add new lines to your answer.\n"
+            f"Let's work this out in a step by step way to be sure we have the right answer.\n"
             f"```\n"
             f"{diff}\n"
             f"```\n\n"
-            f"Answer: "
+            f"Let's work this out in a step by step way to be sure we have the right answer\n"
         )
 
         response = openai.ChatCompletion.create(
@@ -68,7 +68,10 @@ class CodeReviewer:
             messages=[
                 {"role": "system", "content": initial_prompt},
                 *diff_messages,
-                {"role": "user", "content": "Answer: "},
+                {
+                    "role": "user",
+                    "content": "Let's work this out in a step by step way to be sure we have the right answer\n",
+                },
             ],
         )
 

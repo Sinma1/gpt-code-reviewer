@@ -1,3 +1,5 @@
+import asyncio
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -29,10 +31,12 @@ async def review_code_gitlab_webhook(
     request: Request,
     x_gitlab_event: str = Header(),
 ):
+    print("Received GitLab webhook")
     data = await request.json()
     if x_gitlab_event == "Merge Request Hook":
-        await GitLabEventHandler(data).handle_event()
+        asyncio.create_task(GitLabEventHandler(data).handle_event())
 
+    print("Finished processing GitLab webhook")
     return {"status": "ok"}
 
 
@@ -41,10 +45,12 @@ async def review_code_bitbucket_webhook(
     request: Request,
     x_event_key: str = Header(),
 ):
+    print("Received Bitbucket webhook")
     data = await request.json()
     if x_event_key == "pullrequest:created" or x_event_key == "pullrequest:updated":
-        await BitbucketEventHandler(data).handle_event()
+        asyncio.create_task(BitbucketEventHandler(data).handle_event())
 
+    print("Finished processing Bitbucket webhook")
     return {"status": "ok"}
 
 

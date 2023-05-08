@@ -41,10 +41,12 @@ class GitLabEventHandler(EventHandler):
         project_id = self.data["project"]["id"]
         merge_request_id = self.data["object_attributes"]["iid"]
 
-        # Process the merge request data and get the code diff
+        print("Process the merge request data and get the code diff")
         changes = await GitLab.get_merge_request_changes(project_id, merge_request_id)
 
+        print("Interact with GPT to review code and post comments on GitLab")
         for review_result in await self.review_changes_at_once(changes):
+            print("Review result: ", review_result)
             if review_result and review_result["should_comment"]:
                 GitLab.comment_on_merge_request(
                     project_id,
