@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from dotenv import load_dotenv
 
@@ -12,6 +13,8 @@ from integrations.bitbucket import BitbucketEventHandler
 from integrations.gitlab import GitLabEventHandler
 
 import config
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -31,12 +34,12 @@ async def review_code_gitlab_webhook(
     request: Request,
     x_gitlab_event: str = Header(),
 ):
-    print("Received GitLab webhook")
+    logger.info("Received GitLab webhook")
     data = await request.json()
     if x_gitlab_event == "Merge Request Hook":
         asyncio.create_task(GitLabEventHandler(data).handle_event())
 
-    print("Finished processing GitLab webhook")
+    logger.info("Finished processing GitLab webhook")
     return {"status": "ok"}
 
 
@@ -45,12 +48,12 @@ async def review_code_bitbucket_webhook(
     request: Request,
     x_event_key: str = Header(),
 ):
-    print("Received Bitbucket webhook")
+    logger.info("Received Bitbucket webhook")
     data = await request.json()
     if x_event_key == "pullrequest:created" or x_event_key == "pullrequest:updated":
         asyncio.create_task(BitbucketEventHandler(data).handle_event())
 
-    print("Finished processing Bitbucket webhook")
+    logger.info("Finished processing Bitbucket webhook")
     return {"status": "ok"}
 
 
