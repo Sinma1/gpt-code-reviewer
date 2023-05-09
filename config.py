@@ -6,9 +6,7 @@ env = os.environ
 
 SERVICE_TOKEN = env.get("SERVICE_TOKEN", "secret-service-token")
 OPEN_AI_KEY = env.get("OPENAI_API_KEY")
-GITLAB_API_URL = env.get(
-    "GITLAB_API_URL", default="https://git.profil-software.com/api/v4"
-)
+GITLAB_API_URL = env.get("GITLAB_API_URL", default="https://gitlab.com/api/v4")
 GITLAB_ACCESS_TOKEN = env.get("GITLAB_ACCESS_TOKEN")
 BITBUCKET_API_URL = env.get(
     "BITBUCKET_API_URL", default="https://api.bitbucket.org/2.0"
