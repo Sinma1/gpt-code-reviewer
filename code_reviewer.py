@@ -20,8 +20,11 @@ PROMPT_BASE = (
     "Answer in valid json in the following form:\n"
     '{{"should_comment": bool, "issues": "<possible issues with code with detailed explanation why>", "suggestions": "<suggestions of improvements that can be introduced to code with explanation why"}}\n\n'
     "Remember to format it readably and include newlines in your answer.\n"
-    "Please work through this in a step by step way to be sure we have the right answer.\n"
 )
+
+# Having this exact phrase at the *end* of the prompt improves results
+# https://openreview.net/forum?id=92gvk82DE-
+STEP_BY_STEP = "Let’s work this out in a step by step way to be sure we have the right answer"
 
 class CodeReviewer:
     @staticmethod
@@ -32,6 +35,7 @@ class CodeReviewer:
             f"{diff}\n"
             f"```\n\n"
             f"Does this diff contain any issues? Can it be improved?\n"
+            f"{STEP_BY_STEP}"
         )
 
         response = openai.ChatCompletion.create(
@@ -65,7 +69,10 @@ class CodeReviewer:
                 *diff_messages,
                 {
                     "role": "user", 
-                    "content": "Do these diffs contain any issues? Can they be improved?\n"
+                    "content": (
+                        f"Do these diffs contain any issues? Can they be improved?\n"
+                        f"{STEP_BY_STEP}"
+                    ),
                 },
             ],
         )
