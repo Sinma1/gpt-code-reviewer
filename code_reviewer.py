@@ -14,20 +14,24 @@ CodeDiff = TypedDict(
 )
 
 
+PROMPT_BASE = (
+    "Act as an expert software tech lead during code review.\n"
+    "Take into account that this is only a snippet, it does not contain full code.\n"
+    "Answer in valid json in the following form:\n"
+    '{{"should_comment": bool, "issues": "<possible issues with code with detailed explanation why>", "suggestions": "<suggestions of improvements that can be introduced to code with explanation why"}}\n\n'
+    "Remember to format it readably and include newlines in your answer.\n"
+    "Please work through this in a step by step way to be sure we have the right answer.\n"
+)
+
 class CodeReviewer:
     @staticmethod
     async def review_code_diff(file_name: str, diff: str):
         prompt = (
-            f"Act a expert software tech lead during code review.\n"
-            f"Take into account that this only snippet, it does not contain full code.\n"
-            f"Does this code diffs contain any issues? Can it be improved?\n"
-            f"Answer in valid json format in the following form:\n"
-            f'{{"should_comment": bool, "issues": "<possible issues with code with detailed explanation why>", "suggestions": "<suggestions of improvements that can be introduced to code with explanation why"}}\n\n'
-            f"Let's work this out in a step by step way to be sure we have the right answer.\n"
+            f"{PROMPT_BASE}\n"
             f"```\n"
             f"{diff}\n"
             f"```\n\n"
-            f"Let's work this out in a step by step way to be sure we have the right answer\n"
+            f"Does this diff contain any issues? Can it be improved?\n"
         )
 
         response = openai.ChatCompletion.create(
@@ -47,15 +51,6 @@ class CodeReviewer:
 
     @staticmethod
     async def review_code_diffs(diffs: list[CodeDiff]):
-        initial_prompt = (
-            f"Act a expert software tech lead during code review.\n"
-            f"Take into account that this only snippet, it does not contain full code.\n"
-            f"Does this code diffs contain any issues? Can it be improved?\n"
-            f"Answer in valid json format in the following form:\n"
-            f'{{"should_comment": bool, "issues": "<possible problems with code with detailed explanation why>", "suggestions": "<suggestions of improvements that can be introduced to code with explanation why"}}\n\n'
-            f"Remember to format it readably and add new lines to your answer.\n"
-        )
-
         diff_messages = [
             {
                 "role": "user",
@@ -66,11 +61,11 @@ class CodeReviewer:
         response = openai.ChatCompletion.create(
             model=config.GPT_MODEL,
             messages=[
-                {"role": "system", "content": initial_prompt},
+                {"role": "system", "content": PROMPT_BASE},
                 *diff_messages,
                 {
-                    "role": "user",
-                    "content": "Let's work this out in a step by step way to be sure we have the right answer\n",
+                    "role": "user", 
+                    "content": "Do these diffs contain any issues? Can they be improved?\n"
                 },
             ],
         )
