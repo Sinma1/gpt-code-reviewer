@@ -55,8 +55,10 @@ class GitLabEventHandler(EventHandler):
                     merge_request_id,
                     comment=(
                         f"## GPT Code Review\n"
-                        f'### Possible issues: {review_result["issues"]}\n'
-                        f'### Suggestions: {review_result["suggestions"]}'
+                        f'### Possible issues:\n'
+                        f'{review_result["issues"]}\n'
+                        f'### Suggestions:\n'
+                        f'{review_result["suggestions"]}'
                     ),
                 )
             elif review_result is None:
