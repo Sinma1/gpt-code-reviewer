@@ -38,7 +38,7 @@ async def review_code_gitlab_webhook(
 ):
     logger.warning("Received GitLab webhook")
     data = await request.json()
-    if x_gitlab_event == "Merge Request Hook":
+    if x_gitlab_event == "Merge Request Hook" and data["action"] == "open":
         asyncio.create_task(GitLabEventHandler(data).handle_event())
 
     logger.warning("Finished processing GitLab webhook")
